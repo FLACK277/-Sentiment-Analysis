@@ -462,3 +462,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Made with 💻 for e-commerce intelligence and customer sentiment understanding**
+
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/FLACK277/-Sentiment-Analysis?utm_source=oss&utm_medium=github&utm_campaign=FLACK277%2F-Sentiment-Analysis&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
