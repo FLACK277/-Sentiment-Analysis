@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
 import type { AnalysisResponse } from "../types/sentiment";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787";
+const fallbackApiBase = typeof window !== "undefined" && window.location.hostname === "localhost"
+  ? "http://localhost:8787"
+  : "";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? fallbackApiBase;
 
 export const useSentiment = () => {
   const [result, setResult] = useState<AnalysisResponse | null>(null);

@@ -3,16 +3,17 @@
 A production-style, TypeScript-first refactor of the original notebook workflow.
 
 ## Stack
-- **Backend**: Node.js + Express + TypeScript
+- **Backend (local/dev)**: Node.js + Express + TypeScript
+- **Backend (Vercel prod)**: Serverless functions under `api/`
 - **Frontend**: React + Vite + TypeScript + React Three Fiber
-- **Modeling**: In-repo Naive Bayes text classifier trained from `laptops_dataset_final_600.csv` at server startup
+- **Modeling**: In-repo Naive Bayes text classifier trained from `laptops_dataset_final_600.csv`
 
 ## What changed (review + refactor)
 
 ### 1) Correctness and architecture
 - Replaced notebook-only flow with modular backend services, typed domain contracts, and route isolation.
-- Added startup bootstrap that trains the model once, then serves analysis requests.
-- Added centralized server error middleware and safer async handling in `/api/health`.
+- Added startup bootstrap that trains the model once for local Node server mode.
+- Added serverless initialization guards for Vercel (`api/_shared.ts`) so model training occurs lazily and safely per function instance.
 
 ### 2) ML/NLP improvements
 - Replaced generic lexicon scoring with a dataset-adapted **multinomial Naive Bayes** pipeline.
@@ -29,21 +30,15 @@ A production-style, TypeScript-first refactor of the original notebook workflow.
 
 ```text
 .
-├── backend
-│   └── src
-│       ├── config
-│       ├── domain
-│       ├── routes
-│       ├── services
-│       ├── utils
-│       └── server.ts
-├── frontend
-│   └── src
-│       ├── components
-│       ├── hooks
-│       ├── types
-│       ├── App.tsx
-│       └── main.tsx
+├── api/                          # Vercel serverless API (Option B)
+│   ├── _shared.ts
+│   ├── health.ts
+│   └── sentiment/
+│       ├── analyze.ts
+│       └── model-info.ts
+├── backend/                      # Local Node server runtime
+├── frontend/
+├── vercel.json
 └── laptops_dataset_final_600.csv
 ```
 
@@ -98,6 +93,29 @@ Returns training metadata (`vocabularySize`, `trainedRows`, class priors).
 
 ### GET `/api/health`
 Returns server status + dataset summary + model metadata.
+
+## Deploy to Vercel (Option B: frontend + API on one Vercel project)
+
+This repo now supports deploying everything on Vercel:
+
+1. Push this repo to GitHub/GitLab/Bitbucket.
+2. In Vercel, **Import Project** from the repo.
+3. Keep root as repository root (do not change root directory).
+4. Vercel reads `vercel.json`:
+   - install: `npm install`
+   - build: `npm run build -w frontend`
+   - static output: `frontend/dist`
+   - SPA route fallback for frontend navigation
+5. Deploy.
+
+Serverless endpoints available after deploy:
+- `https://<your-domain>/api/sentiment/analyze`
+- `https://<your-domain>/api/sentiment/model-info`
+- `https://<your-domain>/api/health`
+
+### Environment variables
+- Not required for default same-origin deployment.
+- Optional: set `VITE_API_URL` if frontend should target a different backend domain.
 
 ## 3D visualization
 - 3D rounded card rotates/floats and updates by sentiment state.
