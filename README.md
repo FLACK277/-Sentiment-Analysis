@@ -102,6 +102,8 @@ This repo now supports deploying everything on Vercel:
 2. In Vercel, **Import Project** from the repo.
 3. Keep root as repository root (do not change root directory).
 4. Vercel reads `vercel.json`:
+   - install: `npm install && npm install --prefix frontend`
+   - build: `npm run build --prefix frontend`
    - install: `npm install`
    - build: `npm run build -w frontend`
    - static output: `frontend/dist`
