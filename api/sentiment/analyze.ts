@@ -1,8 +1,8 @@
-import type { VercelLikeRequest, VercelLikeResponse } from "../_types";
-import { analyzeText } from "../../backend/src/services/sentimentService.js";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { analyzeText } from "../../backend/src/services/sentimentService";
 import { ensureModelReady, sendMethodNotAllowed } from "../_shared";
 
-export default async function handler(req: VercelLikeRequest, res: VercelLikeResponse): Promise<void> {
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (req.method !== "POST") {
     sendMethodNotAllowed(res, "POST");
     return;
