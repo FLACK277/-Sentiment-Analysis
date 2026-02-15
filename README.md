@@ -94,28 +94,148 @@ Returns training metadata (`vocabularySize`, `trainedRows`, class priors).
 ### GET `/api/health`
 Returns server status + dataset summary + model metadata.
 
-## Deploy to Vercel (Option B: frontend + API on one Vercel project)
+## Deploy to Vercel
 
-This repo now supports deploying everything on Vercel:
+This repository is optimized for seamless deployment on Vercel, with both the frontend and serverless API functions hosted together on a single project.
 
-1. Push this repo to GitHub/GitLab/Bitbucket.
-2. In Vercel, **Import Project** from the repo.
-3. Keep root as repository root (do not change root directory).
-4. Vercel reads `vercel.json`:
-   - install: `npm install`
-   - build: `npm run build -w frontend`
-   - static output: `frontend/dist`
-   - SPA route fallback for frontend navigation
-5. Deploy.
+### Prerequisites
 
-Serverless endpoints available after deploy:
-- `https://<your-domain>/api/sentiment/analyze`
-- `https://<your-domain>/api/sentiment/model-info`
-- `https://<your-domain>/api/health`
+- A [Vercel account](https://vercel.com/signup) (free tier works)
+- Your repository on GitHub, GitLab, or Bitbucket
+- Node.js 18+ (handled automatically by Vercel)
 
-### Environment variables
-- Not required for default same-origin deployment.
-- Optional: set `VITE_API_URL` if frontend should target a different backend domain.
+### Deployment Steps
+
+#### 1. Prepare Your Repository
+
+Ensure your repository includes:
+- `vercel.json` configuration file (already included)
+- `package.json` with `@vercel/node` dependency
+- Root-level `tsconfig.json` for API compilation
+- API functions in the `api/` directory
+
+All of these are already configured in this repository.
+
+#### 2. Connect to Vercel
+
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Click **"Add New..."** → **"Project"**
+3. Import your Git repository
+4. Select the repository: `FLACK277/-Sentiment-Analysis`
+
+#### 3. Configure Project Settings
+
+Vercel will auto-detect the configuration from `vercel.json`:
+
+- **Framework Preset**: Other (or Vite if detected)
+- **Root Directory**: `.` (keep as repository root - do NOT change)
+- **Build Command**: `npm run build -w frontend` (auto-configured)
+- **Output Directory**: `frontend/dist` (auto-configured)
+- **Install Command**: `npm install` (auto-configured)
+
+**Important**: Do not change the root directory. The API functions in the `api/` folder must be at the repository root for Vercel to detect them as serverless functions.
+
+#### 4. Deploy
+
+Click **"Deploy"** and wait for the build to complete (typically 1-3 minutes).
+
+#### 5. Verify Deployment
+
+After deployment, test your endpoints:
+
+**Frontend:**
+- `https://your-project.vercel.app/` - Main application UI
+
+**API Endpoints:**
+- `https://your-project.vercel.app/api/health` - Health check
+- `https://your-project.vercel.app/api/sentiment/analyze` - POST sentiment analysis
+- `https://your-project.vercel.app/api/sentiment/model-info` - GET model metadata
+
+### How It Works
+
+#### Serverless API Functions
+
+The `api/` directory contains serverless functions that:
+- Use official `@vercel/node` types (`VercelRequest`, `VercelResponse`)
+- Lazy-load and cache the sentiment model on first request
+- Share model state across invocations within the same instance
+- Import backend services directly (TypeScript files, not compiled JS)
+
+Each API route is a separate serverless function:
+```
+api/
+├── _shared.ts         # Shared utilities (model caching, helpers)
+├── health.ts          # GET /api/health
+└── sentiment/
+    ├── analyze.ts     # POST /api/sentiment/analyze
+    └── model-info.ts  # GET /api/sentiment/model-info
+```
+
+#### Configuration Files
+
+**`vercel.json`:**
+```json
+{
+  "buildCommand": "npm run build -w frontend",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/((?!api(/|$)).*)", "destination": "/index.html" }
+  ]
+}
+```
+
+The `rewrites` rule ensures:
+- API routes (`/api/*`) are handled by serverless functions
+- All other routes fall back to `index.html` for SPA routing
+
+**Root `tsconfig.json`:**
+Provides TypeScript configuration for API functions with proper module resolution.
+
+### Environment Variables
+
+**Default (Same-Origin) Deployment:**
+No environment variables required. The frontend automatically uses relative URLs (`/api/...`) which resolve to the same domain.
+
+**Custom Backend (Optional):**
+If you need the frontend to connect to a different API backend:
+1. Go to Project Settings → Environment Variables
+2. Add: `VITE_API_URL=https://your-api-domain.com`
+3. Redeploy
+
+### Troubleshooting
+
+**Build Fails:**
+- Ensure `@vercel/node` is in root `package.json` devDependencies
+- Check that `tsconfig.json` exists at repository root
+- Verify Node.js version compatibility (18+ recommended)
+
+**API Functions Return 404:**
+- Confirm `api/` directory is at repository root (not in a subdirectory)
+- Check that functions export a default handler: `export default async function handler(req, res) { ... }`
+
+**Frontend Can't Connect to API:**
+- Verify no `VITE_API_URL` environment variable conflicts
+- Check browser console for CORS or network errors
+- Test API endpoints directly: `curl https://your-app.vercel.app/api/health`
+
+**Model Training Timeout:**
+- Vercel functions have a 10-second timeout on the free tier
+- Model training (~600 rows) typically completes in 1-2 seconds
+- For larger datasets, consider pre-training and loading a serialized model
+
+### Continuous Deployment
+
+Vercel automatically redeploys when you push to your repository's main branch:
+1. Push changes to GitHub: `git push origin main`
+2. Vercel detects the push and triggers a new deployment
+3. Your site updates automatically (usually within 2-3 minutes)
+
+### Production Considerations
+
+- **Cold Starts**: First request after inactivity may take 2-5 seconds while the function initializes
+- **Model Caching**: The trained model persists in memory during function lifetime (typically 5-15 minutes of inactivity)
+- **Concurrency**: Vercel automatically scales serverless functions based on traffic
+- **Logs**: View function logs in Vercel Dashboard → Project → Functions tab
 
 ## 3D visualization
 - 3D rounded card rotates/floats and updates by sentiment state.
