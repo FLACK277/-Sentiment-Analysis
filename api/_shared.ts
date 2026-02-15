@@ -1,7 +1,7 @@
-import type { VercelLikeResponse } from "./_types";
+import type { VercelResponse } from "@vercel/node";
 import path from "node:path";
-import { loadDatasetSummary } from "../backend/src/services/datasetService.js";
-import { trainSentimentModel } from "../backend/src/services/sentimentService.js";
+import { loadDatasetSummary } from "../backend/src/services/datasetService";
+import { trainSentimentModel } from "../backend/src/services/sentimentService";
 
 const datasetPath = path.resolve(process.cwd(), "laptops_dataset_final_600.csv");
 
@@ -24,7 +24,7 @@ export const getDatasetSummaryCached = async () => {
   return datasetSummaryPromise;
 };
 
-export const sendMethodNotAllowed = (res: VercelLikeResponse, allowed: string): void => {
+export const sendMethodNotAllowed = (res: VercelResponse, allowed: string): void => {
   res.setHeader("Allow", allowed);
   res.status(405).json({ error: "Method not allowed" });
 };
