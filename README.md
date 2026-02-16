@@ -4,7 +4,7 @@ A production-style, TypeScript-first refactor of the original notebook workflow.
 
 ## Stack
 - **Backend (local/dev)**: Node.js + Express + TypeScript
-- **Backend (Vercel prod)**: Serverless functions under `api/`
+- **Backend (Vercel prod)**: Serverless functions under 
 - **Frontend**: React + Vite + TypeScript + React Three Fiber
 - **Modeling**: In-repo Naive Bayes text classifier trained from `laptops_dataset_final_600.csv`
 
