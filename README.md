@@ -1,4 +1,4 @@
-# 3D Sentiment Analysis Platform (TypeScript Full-Stack)
+# 3D Sentiment Analysis Platform 
 
 A production-style, TypeScript-first refactor of the original notebook workflow.
 
