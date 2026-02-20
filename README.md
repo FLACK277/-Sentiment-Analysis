@@ -1,6 +1,6 @@
 # 3D Sentiment Analysis Platform 
 
-A production-style, TypeScript-first refactor of the original notebook workflow.
+A production-style, TypeScript-first refactor of the original notebook workflow
 
 ## Stack
 - **Backend (local/dev)**: Node.js + Express + TypeScript
