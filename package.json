@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "npm run dev -w backend & npm run dev -w frontend",
     "build": "npm run build -w backend && npm run build -w frontend",
-    "lint": "npm run lint -w backend && npm run lint -w frontend"
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "smoke:vercel": "bash scripts/smoke-vercel.sh"
   },
   "devDependencies": {
     "@vercel/node": "^3.0.0"

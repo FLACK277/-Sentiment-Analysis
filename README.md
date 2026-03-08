@@ -124,6 +124,11 @@ After deployment, test:
 - `/api/sentiment/model-info`
 - `/api/sentiment/analyze` with POST JSON body: `{ "text": "great battery life" }`
 
+Or run the smoke test script:
+```bash
+npm run smoke:vercel -- https://your-app.vercel.app
+```
+
 ## Notes
 
 - Local backend mode still works with Node + Python (`npm run dev`).

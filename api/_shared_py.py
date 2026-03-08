@@ -3,7 +3,6 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 import sys
-from threading import Lock
 from typing import Any
 
 
@@ -12,13 +11,11 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
 from backend.ml.predict import predict  # noqa: E402
-from backend.ml.train_model import train_notebook_model  # noqa: E402
 
 
 DATASET_PATH = ROOT_DIR / "laptops_dataset_final_600.csv"
-ARTIFACT_DIR = Path("/tmp/notebook-model-artifacts")
+ARTIFACT_DIR = ROOT_DIR / "backend" / "ml" / "artifacts"
 
-_model_lock = Lock()
 _model_metadata: dict[str, Any] | None = None
 _dataset_summary: dict[str, Any] | None = None
 
@@ -29,9 +26,18 @@ def ensure_model_ready() -> dict[str, Any]:
     if _model_metadata is not None:
         return _model_metadata
 
-    with _model_lock:
-        if _model_metadata is None:
-            _model_metadata = train_notebook_model(DATASET_PATH, ARTIFACT_DIR)
+    metadata_path = ARTIFACT_DIR / "notebook_model_metadata.json"
+    model_path = ARTIFACT_DIR / "notebook_model.joblib"
+
+    if not model_path.exists() or not metadata_path.exists():
+        raise FileNotFoundError(
+            "Model artifacts are missing. Expected files under backend/ml/artifacts/. "
+            "Run backend/ml/train_model.py locally and commit the generated artifacts."
+        )
+
+    import json
+
+    _model_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
 
     return _model_metadata
 
