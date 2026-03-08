@@ -9,10 +9,13 @@
       "includeFiles": "{backend/ml/**/*.py,backend/ml/artifacts/*.joblib,backend/ml/artifacts/*.json,laptops_dataset_final_600.csv}"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/((?!api(/|$)).*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
