@@ -2,5 +2,7 @@ node_modules/
 **/node_modules/
 backend/dist/
 frontend/dist/
+.venv/
+backend/ml/artifacts/
 .DS_Store
 *.log

@@ -14,3 +14,38 @@ export interface AnalysisResponse {
   explanation: string;
   topContributors: TokenContribution[];
 }
+
+export interface ModelScore {
+  name: string;
+  accuracy: number;
+}
+
+export interface ModelMetadata {
+  vocabularySize: number;
+  trainedRows: number;
+  classPrior: Record<"positive" | "negative", number>;
+  modelName: string;
+  modelSource: string;
+  validationAccuracy: number;
+  evaluatedModels: ModelScore[];
+  topFeatures: TokenContribution[];
+}
+
+export interface DatasetSample {
+  product: string;
+  title: string;
+  sentiment: SentimentLabel;
+}
+
+export interface DatasetSummary {
+  totalRows: number;
+  skippedRows: number;
+  classDistribution: Record<SentimentLabel, number>;
+  sample: DatasetSample[];
+}
+
+export interface HealthResponse {
+  status: string;
+  dataset: DatasetSummary;
+  model: ModelMetadata;
+}

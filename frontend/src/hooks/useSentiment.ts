@@ -1,11 +1,20 @@
 import { useRef, useState } from "react";
 import type { AnalysisResponse } from "../types/sentiment";
 
-const fallbackApiBase = typeof window !== "undefined" && window.location.hostname === "localhost"
-  ? "http://localhost:8787"
-  : "";
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? fallbackApiBase;
+const parseResponse = async <T>(response: Response): Promise<T> => {
+  const body = await response.text();
+  if (!body.trim()) {
+    throw new Error(response.ok ? "The server returned an empty response." : "The request failed without a response body.");
+  }
+
+  try {
+    return JSON.parse(body) as T;
+  } catch {
+    throw new Error("The API returned an invalid response. Check that the backend is reachable.");
+  }
+};
 
 export const useSentiment = () => {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
@@ -20,6 +29,7 @@ export const useSentiment = () => {
 
     setError(null);
     setIsLoading(true);
+    setResult(null);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/sentiment/analyze`, {
@@ -29,7 +39,7 @@ export const useSentiment = () => {
         signal: controller.signal
       });
 
-      const payload = (await response.json()) as AnalysisResponse | { error?: string };
+      const payload = await parseResponse<AnalysisResponse | { error?: string }>(response);
       if (!response.ok) {
         throw new Error("error" in payload ? payload.error ?? "Failed to analyze sentiment" : "Failed to analyze sentiment");
       }

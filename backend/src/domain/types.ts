@@ -16,6 +16,11 @@ export interface TokenContribution {
   weight: number;
 }
 
+export interface ModelScore {
+  name: string;
+  accuracy: number;
+}
+
 export interface AnalysisResponse {
   text: string;
   sentiment: SentimentLabel;
@@ -41,4 +46,9 @@ export interface ModelMetadata {
   vocabularySize: number;
   trainedRows: number;
   classPrior: Record<"positive" | "negative", number>;
+  modelName: string;
+  modelSource: string;
+  validationAccuracy: number;
+  evaluatedModels: ModelScore[];
+  topFeatures: TokenContribution[];
 }
