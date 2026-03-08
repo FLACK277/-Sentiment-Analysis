@@ -7,31 +7,12 @@ import re
 import sys
 
 import joblib
-import nltk
 import numpy as np
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 
 
 MODEL_FILE_NAME = "notebook_model.joblib"
-
-
-def ensure_nltk_resources() -> None:
-    resources = {
-        "stopwords": "corpora/stopwords",
-        "wordnet": "corpora/wordnet",
-        "omw-1.4": "corpora/omw-1.4",
-    }
-    for resource_name, resource_path in resources.items():
-        try:
-            nltk.data.find(resource_path)
-        except LookupError:
-            nltk.download(resource_name, quiet=True)
-
-
-ensure_nltk_resources()
-STOP_WORDS = set(stopwords.words("english"))
-LEMMATIZER = WordNetLemmatizer()
+STOP_WORDS = set(ENGLISH_STOP_WORDS)
 
 
 def preprocess_text(text: object) -> str:
@@ -46,11 +27,7 @@ def preprocess_text(text: object) -> str:
     if not normalized:
         return ""
 
-    words = [
-        LEMMATIZER.lemmatize(word)
-        for word in normalized.split()
-        if word not in STOP_WORDS
-    ]
+    words = [word for word in normalized.split() if word not in STOP_WORDS]
     return " ".join(words)
 
 

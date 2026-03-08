@@ -1,6 +1,13 @@
 from http.server import BaseHTTPRequestHandler
+from pathlib import Path
+import sys
 
-from _shared_py import ensure_model_ready, load_dataset_summary, send_json
+
+API_DIR = Path(__file__).resolve().parent
+if str(API_DIR) not in sys.path:
+    sys.path.append(str(API_DIR))
+
+from _shared_py import ensure_model_ready, load_dataset_summary, send_json  # noqa: E402
 
 
 class handler(BaseHTTPRequestHandler):
