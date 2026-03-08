@@ -6,12 +6,7 @@
   "functions": {
     "api/**/*.py": {
       "maxDuration": 60,
-      "includeFiles": [
-        "backend/ml/**/*.py",
-        "backend/ml/artifacts/*.joblib",
-        "backend/ml/artifacts/*.json",
-        "laptops_dataset_final_600.csv"
-      ]
+      "includeFiles": "{backend/ml/**/*.py,backend/ml/artifacts/*.joblib,backend/ml/artifacts/*.json,laptops_dataset_final_600.csv}"
     }
   },
   "rewrites": [
