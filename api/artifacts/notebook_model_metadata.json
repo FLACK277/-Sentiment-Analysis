@@ -1,0 +1,71 @@
+{
+  "vocabularySize": 5000,
+  "trainedRows": 24113,
+  "classPrior": {
+    "positive": 0.8129,
+    "negative": 0.1871
+  },
+  "modelName": "SVM",
+  "modelSource": "LaptopML.ipynb",
+  "validationAccuracy": 0.9789,
+  "evaluatedModels": [
+    {
+      "name": "SVM",
+      "accuracy": 0.9789
+    },
+    {
+      "name": "Random Forest",
+      "accuracy": 0.888
+    }
+  ],
+  "topFeatures": [
+    {
+      "token": "wonderful",
+      "weight": 5.1714
+    },
+    {
+      "token": "really nice",
+      "weight": 5.0269
+    },
+    {
+      "token": "fair",
+      "weight": 4.8659
+    },
+    {
+      "token": "terrific",
+      "weight": 4.5546
+    },
+    {
+      "token": "awesome",
+      "weight": 4.323
+    },
+    {
+      "token": "excellent",
+      "weight": 4.0236
+    },
+    {
+      "token": "brilliant",
+      "weight": 3.9888
+    },
+    {
+      "token": "nice product",
+      "weight": 3.9534
+    },
+    {
+      "token": "job",
+      "weight": 3.9524
+    },
+    {
+      "token": "decent product",
+      "weight": 3.7564
+    },
+    {
+      "token": "wow",
+      "weight": 3.7544
+    },
+    {
+      "token": "delightful",
+      "weight": 3.6221
+    }
+  ]
+}

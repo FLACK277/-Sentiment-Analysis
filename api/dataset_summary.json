@@ -1,0 +1,26 @@
+{
+  "totalRows": 24113,
+  "skippedRows": 0,
+  "classDistribution": {
+    "positive": 19601,
+    "negative": 4512,
+    "neutral": 0
+  },
+  "sample": [
+    {
+      "product": "Apple MacBook AIR Apple M2 - (8 GB/256 GB SSD/Mac OS Monterey)...",
+      "title": "Perfect product!",
+      "sentiment": "positive"
+    },
+    {
+      "product": "Apple MacBook AIR Apple M2 - (8 GB/256 GB SSD/Mac OS Monterey)...",
+      "title": "Fabulous!",
+      "sentiment": "positive"
+    },
+    {
+      "product": "Apple MacBook AIR Apple M2 - (8 GB/256 GB SSD/Mac OS Monterey)...",
+      "title": "Fabulous!",
+      "sentiment": "positive"
+    }
+  ]
+}

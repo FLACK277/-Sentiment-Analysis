@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-import csv
+import json
 from pathlib import Path
 import sys
 from typing import Any
 
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
+API_DIR = Path(__file__).resolve().parent
+if str(API_DIR) not in sys.path:
+    sys.path.append(str(API_DIR))
 
-from backend.ml.predict import predict  # noqa: E402
+from _predict_py import predict  # noqa: E402
 
 
-DATASET_PATH = ROOT_DIR / "laptops_dataset_final_600.csv"
-ARTIFACT_DIR = ROOT_DIR / "backend" / "ml" / "artifacts"
+DATASET_SUMMARY_PATH = API_DIR / "dataset_summary.json"
+ARTIFACT_DIR = API_DIR / "artifacts"
 
 _model_metadata: dict[str, Any] | None = None
 _dataset_summary: dict[str, Any] | None = None
@@ -31,11 +31,8 @@ def ensure_model_ready() -> dict[str, Any]:
 
     if not model_path.exists() or not metadata_path.exists():
         raise FileNotFoundError(
-            "Model artifacts are missing. Expected files under backend/ml/artifacts/. "
-            "Run backend/ml/train_model.py locally and commit the generated artifacts."
+            "Model artifacts are missing. Expected files under api/artifacts/."
         )
-
-    import json
 
     _model_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
 
@@ -56,54 +53,14 @@ def load_dataset_summary() -> dict[str, Any]:
     if _dataset_summary is not None:
         return _dataset_summary
 
-    class_distribution = {
-        "positive": 0,
-        "negative": 0,
-        "neutral": 0,
-    }
-    sample: list[dict[str, str]] = []
-    total_rows = 0
-    skipped_rows = 0
+    if not DATASET_SUMMARY_PATH.exists():
+        raise FileNotFoundError("Dataset summary is missing. Expected file under api/dataset_summary.json.")
 
-    with DATASET_PATH.open("r", encoding="utf-8") as dataset_file:
-        reader = csv.DictReader(dataset_file)
-        for row in reader:
-            total_rows += 1
-            review = (row.get("review") or "").strip()
-            if not review:
-                skipped_rows += 1
-                continue
-
-            rating_raw = row.get("rating", "")
-            try:
-                rating = float(rating_raw)
-            except ValueError:
-                rating = 0
-
-            sentiment = "positive" if rating > 3 else "negative"
-            class_distribution[sentiment] += 1
-
-            if len(sample) < 3:
-                sample.append(
-                    {
-                        "product": row.get("product_name") or "",
-                        "title": row.get("title") or "",
-                        "sentiment": sentiment,
-                    }
-                )
-
-    _dataset_summary = {
-        "totalRows": total_rows,
-        "skippedRows": skipped_rows,
-        "classDistribution": class_distribution,
-        "sample": sample,
-    }
+    _dataset_summary = json.loads(DATASET_SUMMARY_PATH.read_text(encoding="utf-8"))
     return _dataset_summary
 
 
 def read_json_body(handler) -> dict[str, Any]:
-    import json
-
     content_length = int(handler.headers.get("Content-Length", 0))
     if content_length <= 0:
         return {}
