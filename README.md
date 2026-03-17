@@ -8,13 +8,7 @@ A Vite + Tailwind frontend with a local Node API that delegates inference to a P
 - **Frontend**: React + Vite + TypeScript + Tailwind CSS
 - **Dataset**: `laptops_dataset_final_600.csv`
 
-## What changed (review + refactor)
-
-## What changed
-
-- The API now uses a Python training and inference flow aligned with LaptopML.ipynb.
-- The frontend no longer depends on the 3D scene; it uses a standard responsive Tailwind layout.
-- Local Vite development proxies `/api` to the Node backend, which avoids the broken JSON parsing path from the old direct fetch behavior.
+##
 
 ## Project structure
 
